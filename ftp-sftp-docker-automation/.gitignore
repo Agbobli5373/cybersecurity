@@ -4,3 +4,4 @@ data/ftp/uploads/*
 !data/ftp/uploads/.gitkeep
 data/sftp/uploads/*
 !data/sftp/uploads/.gitkeep
+analysis_report.md

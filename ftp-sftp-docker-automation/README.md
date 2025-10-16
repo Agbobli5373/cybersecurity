@@ -34,6 +34,7 @@ This folder contains a lightweight Docker-based lab that automates the core task
    - Launch the FTP and/or SFTP servers.
    - Capture traffic while uploading `data/shared/sample.txt`.
    - Stop and clean up the containers.
+   - Generate an `analysis_report.md` with key findings and packet samples.
 
 Packet captures are written to `captures/` with timestamped filenames. Open them in Wireshark to examine the plaintext FTP payloads versus encrypted SFTP payloads.
 
@@ -65,6 +66,6 @@ You can run the components individually with Docker Compose profiles:
 - SFTP: `student / sftp123`
 
 ## Next steps
-- Import the generated PCAP files into Wireshark and highlight the cleartext FTP commands and payloads.
-- Extend `scripts/run_demo.sh` to add automatic Wireshark screenshots or to generate a markdown report.
+- Review the generated `analysis_report.md` for automated findings.
+- Import the generated PCAP files into Wireshark for deeper inspection.
 - Integrate the captures and analysis into your capstone report template.
