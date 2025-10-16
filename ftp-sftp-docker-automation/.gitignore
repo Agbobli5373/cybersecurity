@@ -1,0 +1,6 @@
+captures/*.pcap
+!captures/.gitkeep
+data/ftp/uploads/*
+!data/ftp/uploads/.gitkeep
+data/sftp/uploads/*
+!data/sftp/uploads/.gitkeep

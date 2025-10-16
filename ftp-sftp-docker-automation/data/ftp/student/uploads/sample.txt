@@ -1,0 +1,2 @@
+This is a sample file for the FTP vs SFTP demo.
+It contains plain text to illustrate why encryption matters.

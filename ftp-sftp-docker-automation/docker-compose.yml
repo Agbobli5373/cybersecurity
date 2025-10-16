@@ -1,0 +1,64 @@
+services:
+  ftp:
+    image: fauria/vsftpd:latest
+    container_name: ftp_demo_ftp
+    restart: unless-stopped
+    environment:
+      FTP_USER: student
+      FTP_PASS: ftp123
+      PASV_ADDRESS: ftp
+      PASV_ENABLE: "YES"
+      PASV_MIN_PORT: 21100
+      PASV_MAX_PORT: 21110
+      LOG_STDOUT: "YES"
+      FILE_OPEN_MODE: "0666"
+      LOCAL_UMASK: "022"
+      ANON_UPLOAD_ENABLE: "NO"
+      WRITE_ENABLE: "YES"
+    volumes:
+      - ./data/ftp:/home/vsftpd
+    networks:
+      - demo
+    ports:
+      - "2121:21"
+      - "21100-21110:21100-21110"
+
+  sftp:
+    image: atmoz/sftp:latest
+    container_name: ftp_demo_sftp
+    restart: unless-stopped
+    command: student:sftp123:1001:1001:upload
+    volumes:
+      - ./data/sftp/uploads:/home/student/upload
+    networks:
+      - demo
+    ports:
+      - "2223:22"
+
+  ftp-client:
+    image: curlimages/curl:8.9.1
+    profiles:
+      - clients
+    entrypoint: ["/bin/sh", "-c"]
+    working_dir: /data
+    volumes:
+      - ./data/shared:/data:ro
+    networks:
+      - demo
+
+  capture:
+    image: nicolaka/netshoot:latest
+    profiles:
+      - tools
+    entrypoint: ["tcpdump", "-p", "-i", "eth0"]
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+    volumes:
+      - ./captures:/captures
+    networks:
+      - demo
+
+networks:
+  demo:
+    driver: bridge
