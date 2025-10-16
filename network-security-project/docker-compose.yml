@@ -1,0 +1,50 @@
+version: '3.8'
+
+services:
+  router-firewall:
+    image: alpine:latest
+    container_name: router-firewall
+    networks:
+      - office
+      - guest
+    cap_add:
+      - NET_ADMIN
+    command: sh -c "apk add --no-cache iptables && tail -f /dev/null"
+    volumes:
+      - ./firewall-rules.sh:/firewall-rules.sh
+
+  workstation:
+    image: alpine:latest
+    container_name: workstation
+    networks:
+      - office
+    command: sh -c "apk add --no-cache nmap tcpdump && tail -f /dev/null"
+    volumes:
+      - ./:/scripts
+
+  server:
+    image: nginx:alpine
+    container_name: server
+    networks:
+      - office
+    ports:
+      - "8080:80"
+
+  iot-device:
+    image: alpine:latest
+    container_name: iot-device
+    networks:
+      - guest
+    command: sh -c "echo 'IoT Device Running' && tail -f /dev/null"
+
+networks:
+  office:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
+  guest:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.21.0.0/16

@@ -1,0 +1,47 @@
+// Enhanced Network Security Lab Architecture Diagram for Eraser.io
+
+// Main Components
+Internet [icon: globe, label: "Internet\n(External Access)"]
+
+Router Firewall [icon: shield, label: "Router/Firewall\n(Docker Container)"] {
+  Docker Network Gateway [icon: docker, label: "Docker Network Gateway\n(Bridge Mode)"]
+  iptables Rules [icon: terminal, label: "iptables Rules\n(INPUT/OUTPUT/FORWARD Chains)"]
+  Security Controls [icon: lock, label: "Security Controls\n(Firewall, NAT, Filtering)"]
+}
+
+Office Network [icon: network, label: "Office Network\n(Subnet: 172.20.0.0/16)"] {
+  Workstation [icon: monitor, label: "Workstation\n(Container: Alpine Linux)\nTools: Nmap, tcpdump"]
+  Server [icon: server, label: "Server\n(Container: Nginx)\nService: HTTP on Port 80"]
+  Internal Traffic [icon: arrow-right, label: "Internal Traffic\n(Allowed)"]
+}
+
+"Guest Wi-Fi" [icon: wifi, label: "Guest Wi-Fi\n(Subnet: 172.21.0.0/16)"] {
+  IoT Device [icon: cpu, label: "IoT Device\n(Container: Alpine Linux)\nSimulated Device"]
+  Isolation Zone [icon: shield-alt, label: "Isolation Zone\n(Limited Access)"]
+}
+
+// Connections with Details
+Internet > Router Firewall: "External Access\n(Potential Threats)"
+Router Firewall > Office Network: "Allowed: HTTP (Port 80)\n+ Established Connections"
+Router Firewall > "Guest Wi-Fi": "Allowed: Limited Access\n(Restricted Cross-Traffic)"
+
+Workstation --> Server: "Ping Allowed\n(ICMP Traffic)"
+IoT Device --> Server: "Ping Blocked\n(Firewall DROP)"
+Workstation --> Server: "Nmap Scan\n(Port Discovery)"
+Router Firewall --> Internet: "Blocks Unauthorized\n(Outbound Filtering)"
+
+// Additional Security Notes
+Security Notes [icon: info, label: "Key Security Features"] {
+  Network Segmentation [icon: layers, label: "Network Segmentation\n(Contains Breaches)"]
+  Port Hardening [icon: wrench, label: "Port Hardening\n(Close Unneeded Ports)"]
+  Traffic Monitoring [icon: eye, label: "Traffic Monitoring\n(tcpdump/Wireshark)"]
+  Threat Simulation [icon: bug, label: "Threat Simulation\n(Nmap Scans, Blocked Pings)"]
+}
+
+// Legend
+Legend [icon: list, label: "Diagram Legend"] {
+  Solid Arrows [icon: arrow-right, label: "Solid Arrows: Allowed Traffic"]
+  Dashed Arrows [icon: arrow-right-dashed, label: "Dashed Arrows: Blocked/Simulated"]
+  Icons [icon: image, label: "Icons: Component Types"]
+  Labels [icon: tag, label: "Labels: Details & IPs"]
+}

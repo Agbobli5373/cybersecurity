@@ -1,0 +1,29 @@
+// Network Security Lab Architecture
+
+Internet [icon: globe]
+
+Router Firewall [icon: shield, label: "Router/Firewall"] {
+  Docker Network Gateway [icon: docker]
+  iptables Rules [icon: terminal]
+}
+
+Office Network [icon: network, label: "Office Network"] {
+  Workstation [icon: monitor, label: "Workstation"]
+  Server [icon: server, label: "Server"]
+}
+
+"Guest Wi-Fi" [icon: wifi, label: "Guest Wi-Fi"] {
+  IoT Device [icon: cpu, label: "IoT Device"]
+}
+
+// Connections
+Internet > Router Firewall: External Access
+Router Firewall > Office Network: Allowed: HTTP (Port 80)
+Router Firewall > "Guest Wi-Fi": Allowed: Limited Access
+
+
+
+Workstation --> Server: Ping Allowed
+IoT Device --> Server: Ping Blocked
+Workstation --> Server: Nmap Scan
+Internet <-- Router Firewall: Blocks Unauthorized
