@@ -76,10 +76,8 @@ if [ "$PROTOCOL" = "ftp" ] || [ "$PROTOCOL" = "both" ]; then
   sleep 2
   if ! run_ftp_transfer; then
     echo "FTP transfer failed" >&2
-    kill $ftp_capture_pid 2>/dev/null || true
     exit 1
   fi
-  kill $ftp_capture_pid 2>/dev/null || true
   wait "$ftp_capture_pid" || true
   echo "FTP capture saved as $ftp_capture_name"
   echo
@@ -93,10 +91,8 @@ if [ "$PROTOCOL" = "sftp" ] || [ "$PROTOCOL" = "both" ]; then
   sleep 2
   if ! run_sftp_transfer; then
     echo "SFTP transfer failed" >&2
-    kill $sftp_capture_pid 2>/dev/null || true
     exit 1
   fi
-  kill $sftp_capture_pid 2>/dev/null || true
   wait "$sftp_capture_pid" || true
   echo "SFTP capture saved as $sftp_capture_name"
   echo
@@ -104,45 +100,3 @@ fi
 
 echo "Captures saved in $CAPTURE_DIR"
 echo "Inspect them with Wireshark to compare plaintext FTP versus encrypted SFTP traffic."
-
-# Generate a simple analysis report
-REPORT_FILE="$ROOT_DIR/analysis_report.md"
-echo "# FTP vs SFTP Security Analysis Report" > "$REPORT_FILE"
-echo "" >> "$REPORT_FILE"
-echo "## Generated on $(date)" >> "$REPORT_FILE"
-echo "" >> "$REPORT_FILE"
-
-if ls $CAPTURE_DIR/ftp_transfer_*.pcap >/dev/null 2>&1; then
-  FTP_PCAP=$(ls $CAPTURE_DIR/ftp_transfer_*.pcap | tail -1)
-  echo "## FTP Analysis" >> "$REPORT_FILE"
-  echo "Captured file: $(basename $FTP_PCAP)" >> "$REPORT_FILE"
-  echo "" >> "$REPORT_FILE"
-  echo "### Key Findings:" >> "$REPORT_FILE"
-  echo "- **Credentials Exposed**: USER student, PASS ftp123 visible in plaintext." >> "$REPORT_FILE"
-  echo "- **Data Exposed**: File contents transmitted without encryption." >> "$REPORT_FILE"
-  echo "- **Security Risk**: Eavesdroppers can intercept sensitive information." >> "$REPORT_FILE"
-  echo "" >> "$REPORT_FILE"
-  echo "### Sample Packets:" >> "$REPORT_FILE"
-  docker run --rm -v "$CAPTURE_DIR:/captures" nicolaka/netshoot tcpdump -r "/captures/$(basename $FTP_PCAP)" -A -c 10 | grep -E "(USER|PASS|sample)" | head -5 >> "$REPORT_FILE" 2>/dev/null || echo "No matching packets found." >> "$REPORT_FILE"
-  echo "" >> "$REPORT_FILE"
-fi
-
-if ls $CAPTURE_DIR/sftp_transfer_*.pcap >/dev/null 2>&1; then
-  SFTP_PCAP=$(ls $CAPTURE_DIR/sftp_transfer_*.pcap | tail -1)
-  echo "## SFTP Analysis" >> "$REPORT_FILE"
-  echo "Captured file: $(basename $SFTP_PCAP)" >> "$REPORT_FILE"
-  echo "" >> "$REPORT_FILE"
-  echo "### Key Findings:" >> "$REPORT_FILE"
-  echo "- **Encrypted Traffic**: All data protected by SSH encryption." >> "$REPORT_FILE"
-  echo "- **Credentials Secure**: No readable USER/PASS in captures." >> "$REPORT_FILE"
-  echo "- **Data Protected**: File contents unreadable to eavesdroppers." >> "$REPORT_FILE"
-  echo "" >> "$REPORT_FILE"
-  echo "### Sample Packets:" >> "$REPORT_FILE"
-  docker run --rm -v "$CAPURE_DIR:/captures" nicolaka/netshoot tcpdump -r "/captures/$(basename $SFTP_PCAP)" -A -c 5 | head -10 >> "$REPORT_FILE" 2>/dev/null || echo "Encrypted packets (no readable content)." >> "$REPORT_FILE"
-  echo "" >> "$REPORT_FILE"
-fi
-
-echo "## Conclusion" >> "$REPORT_FILE"
-echo "FTP transmits data in plaintext, making it vulnerable to interception. SFTP uses SSH encryption to ensure confidentiality and integrity, making it the secure choice for file transfers." >> "$REPORT_FILE"
-echo "" >> "$REPORT_FILE"
-echo "Report generated: $REPORT_FILE"

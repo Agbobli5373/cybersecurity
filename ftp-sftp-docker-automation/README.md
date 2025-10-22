@@ -17,21 +17,20 @@ This folder contains a lightweight Docker-based lab that automates the core task
    ```bash
    cd ftp-sftp-docker-automation
    ```
-2. Make the automation script executable the first time:
+2. Make the automation scripts executable the first time:
    ```bash
-   chmod +x scripts/run_demo.sh
+   chmod +x scripts/run_demo_ftp.sh scripts/run_demo_sftp.sh
    ```
-3. Run the demo (both FTP and SFTP):
+3. Run the FTP demo:
    ```bash
-   scripts/run_demo.sh
+   scripts/run_demo_ftp.sh
    ```
-   Or run separately:
+   Or run the SFTP demo:
    ```bash
-   scripts/run_demo.sh ftp    # Only FTP demo
-   scripts/run_demo.sh sftp   # Only SFTP demo
+   scripts/run_demo_sftp.sh
    ```
-   The script will:
-   - Launch the FTP and/or SFTP servers.
+   Each script will:
+   - Launch the respective server (FTP or SFTP).
    - Capture traffic while uploading `data/shared/sample.txt`.
    - Stop and clean up the containers.
    - Generate an `analysis_report.md` with key findings and packet samples.
